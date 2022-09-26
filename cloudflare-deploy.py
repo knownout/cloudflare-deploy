@@ -184,7 +184,7 @@ class ScriptConfiguration:
             raise Exception(f"Given invalid record name: {self.Arguments.RecordName}")
 
 
-    def generateNewRecordOptions(self):
+    def generateNewRecordOptions(self, private = False):
         """
         Method for generating API request parameters
 
@@ -194,11 +194,12 @@ class ScriptConfiguration:
         recordOptions = {}
         recordOptions.update({
             "name": self.Arguments.RecordName,
-            "content": self.LocalMachineAddress,
             "type": self.Arguments.RecordType,
             "ttl": self.Arguments.RecordTTL,
             "proxied": self.Arguments.RecordProxied
         })
+
+        if not private: recordOptions["content"] = self.LocalMachineAddress
 
         return recordOptions
 
@@ -357,7 +358,7 @@ def main():
 
     if not arguments.SilentMode:
         print(f"Cloudflare DNS record {'erase' if arguments.EraseMode else 'creation'} request:")
-        print("  ", scriptConfiguration.generateNewRecordOptions(), "\n")
+        print("  ", scriptConfiguration.generateNewRecordOptions(True), "\n")
 
     # Try to create new or delete record
     if not arguments.EraseMode:
